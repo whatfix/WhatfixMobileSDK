@@ -12,7 +12,8 @@ on:
     branches: [master]
   # When a blocked sync is fixed, the developer's PR brings master into the pod branch. GitHub then
   # marks the bot's sync PR (head master) as merged, and this run closes the sync issue. Merges of
-  # ordinary dev branches into pod branches are skipped by the job condition below and cost nothing.
+  # ordinary dev branches into pod branches are skipped by the shared workflow's job condition and
+  # cost nothing.
   pull_request:
     types: [closed]
     branches: ['feature/pod_*']
@@ -30,22 +31,10 @@ permissions:
   issues: write
 
 jobs:
+  # No job condition here on purpose: which events actually sync (and the per-repo pause switch)
+  # is decided in the shared workflow, so changing it doesn't need a rollout to every repo. Only a
+  # change to the triggers above does.
   sync:
-    # Runs on push to master and on manual dispatch. For pull_request events, runs only when a PR
-    # from this repo's own master was merged into a pod branch *by GitHub automatically*, after a
-    # conflict fix. The bot's own merges carry the pod-sync-auto-merged label and are skipped,
-    # because the run that merged them has already done everything.
-    #
-    # Paused repos (argus custom property argus-pod-branch-sync = "false", set in whatfix/argus
-    # config/repo-properties.json) are skipped here, before any job starts, so they bill no Actions
-    # minutes. The event payload carries the repo's custom properties for every trigger.
-    if: >-
-      github.event.repository.custom_properties['argus-pod-branch-sync'] != 'false' &&
-      (github.event_name != 'pull_request' ||
-       (github.event.pull_request.merged == true &&
-        github.event.pull_request.head.ref == 'master' &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        !contains(github.event.pull_request.labels.*.name, 'pod-sync-auto-merged')))
     uses: whatfix/rms-service/.github/workflows/pod-branch-sync-reusable.yml@master
     with:
       dry_run: ${{ inputs.dry_run == true }}
