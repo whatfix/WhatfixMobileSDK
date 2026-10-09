@@ -32,6 +32,26 @@ Add to your `Podfile`, then run `pod install`:
 pod 'WhatfixMobileSDK', '~> <version>'
 ```
 
+### Camera permission
+
+The SDK includes a QR code scanner that Whatfix content creators use to connect a build of your app to
+the Whatfix dashboard. Because the SDK uses the camera, your app's `Info.plist` must include a camera
+usage description, **even if you never enable creator mode**. Without it, App Store Connect warns
+"ITMS-90683: Missing purpose string in Info.plist" when you upload, and App Review can reject the build.
+
+Add this to your app's `Info.plist`:
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>The camera is used to scan a Whatfix QR code that connects this app to Whatfix.</string>
+```
+
+- **The key must be in your app's `Info.plist`.** iOS and App Store Connect ignore permission texts in a
+  framework's `Info.plist`, so the SDK can't declare it for you.
+- **If your app already uses the camera,** keep your existing description; an app has only one. Make
+  sure it still reads correctly for your users.
+- **Without the key, the SDK doesn't crash:** creators enter a pairing code instead of scanning.
+
 ## Getting started
 
 Start the SDK once, as early as possible, for example in `application(_:didFinishLaunchingWithOptions:)`:
