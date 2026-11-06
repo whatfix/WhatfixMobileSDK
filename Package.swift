@@ -16,8 +16,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WhatfixMobileSDK",
-            url: "https://github.com/whatfix/WhatfixMobileSDK/releases/download/1.0.1/WhatfixMobileSDK.xcframework.zip",
-            checksum: "6bfc88f5a9e8212831caadca86d6fef1c65647bd3055021ff72267777a2e1001"
+            url: "https://github.com/whatfix/WhatfixMobileSDK/releases/download/1.1.0/WhatfixMobileSDK.xcframework.zip",
+            checksum: "cef9b7052474b1e25a95f7df01399dc6e7e54a932bcf9cc43c1e10b454ec8142"
         )
     ]
 )
